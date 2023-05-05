@@ -8,4 +8,4 @@ st.write("""
 
 dataset_name = st.sidebar.selectbox("Select DataSets" , ("Iris" , "Breast Cancer", "Wine DataSets"))
 st.write(dataset_name)
-st.write("Done")
+st.write("Done ")
