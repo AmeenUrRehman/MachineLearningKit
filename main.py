@@ -10,6 +10,9 @@ from sklearn.metrics import accuracy_score
 # As we have multiple data and can have features more than 2 dimentions so to be in same dimensions we use PCA
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.cluster import KMeans
 
 st.title("All in one Machine Learning Algoithms ")
 st.write("""
@@ -19,9 +22,67 @@ st.write("""
 
 dataset_name = st.sidebar.selectbox("Select DataSets", ("Iris", "Breast Cancer", "Wine DataSets"))
 
-classifier_name = st.sidebar.selectbox("Select Classifier", ("K-Nearest Neighbor", "Support Vector Machine", "Random Forest Classifier"))
+typeofAlgo = st.sidebar.selectbox("Select type of Algorithm" , ("Supervised Algorithm" , "Unsupervised Algorithm"))
 
 st.write(dataset_name)
+
+
+# Supervised Machine Learning Algorithm
+def add_parameter_Super(clf_name):
+    params = dict()
+    if clf_name == "K-Nearest Neighbor":
+        K = st.sidebar.slider("K", 1, 15)
+        params["K"] = K
+    elif clf_name == "Support Vector Machine":
+        C = st.sidebar.slider("C" , 0.1, 10.0)
+        params["C"] = C
+
+    elif clf_name == "Logistic Regression":
+        R = st.sidebar.slider("Max_Iteration", 1, 100)
+        params["R"] = R
+    elif clf_name == "Decision Tree":
+        max_depth_decision = st.sidebar.slider("max_depth" , 2 , 15)
+        params["max_depth_decision"] = max_depth_decision
+        criterion = st.sidebar.selectbox("Criterion", ("gini", "entropy"))
+        params["criterion"] = criterion
+
+    else:
+        max_depth = st.sidebar.slider("max_depth" , 2 , 15)
+        n_estimators = st.sidebar.slider("n_estimators", 1, 100)
+        params["max_depth"] = max_depth
+        params["n_estimators"] = n_estimators
+    return params
+
+def get_SuperAlgo(SupervisedTypeCat, params):
+    if SupervisedTypeCat == "K-Nearest Neighbor":
+        clf_Super = KNeighborsClassifier(n_neighbors=params["K"])
+    elif SupervisedTypeCat == "Support Vector Machine":
+        clf_Super = SVC(C =params["C"])
+    elif SupervisedTypeCat == "Logistic Regression":
+        clf_Super = LogisticRegression(max_iter= params["R"])
+    elif SupervisedTypeCat == "Decision Tree":
+        clf_Super = DecisionTreeClassifier(criterion= params["criterion"], max_depth= params["max_depth_decision"],
+                                     random_state=1234)
+    else:
+        clf_Super = RandomForestClassifier(n_estimators=params["n_estimators"], max_depth=params["max_depth"],
+                                     random_state=1234)
+    return clf_Super
+
+
+# Unsupervised Machine Learning Algorithms
+def add_parameter_Unsuper(clf_name):
+    params_unsupervised = dict()
+    if clf_name == "K-Means Clustering":
+        n_clusters = st.sidebar.slider("n_cluster", 1, 5)
+        params_unsupervised["n_clusters"] = n_clusters
+    return params_unsupervised
+
+def get_UnSuperAlgo(UnSupervisedTypeCat, params_unsupervised):
+    if UnSupervisedTypeCat == "K-Means Clustering":
+        clf_unsuper = KMeans(n_clusters= params_unsupervised["n_clusters"])
+    return clf_unsuper
+
+
 
 # Defining a function for loading datasets
 def get_dataset(dataset_name):
@@ -40,56 +101,112 @@ X, y = get_dataset(dataset_name)
 st.write("Shape of Datasets : ", X.shape)
 st.write("Number of Classes : ", len(np.unique(y)))
 
-def add_parameter(clf_name):
-    params = dict()
-    if clf_name == "K-Nearest Neighbor":
-        K = st.sidebar.slider("K", 1, 15)
-        params["K"] = K
-    elif clf_name == "Support Vector Machine":
-        C = st.sidebar.slider("C" , 0.0, 10.0)
-        params["C"] = C
+
+def train_supervised(X,y, Classifer_Algo_super, Classifier_name_super):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42, test_size=0.3)
+    Classifer_Algo_super.fit(X_train, y_train)
+    y_pred = Classifer_Algo_super.predict(X_test)
+
+    Accuracy_super = accuracy_score(y_test, y_pred)
+
+    st.write(f"Classifier name = {Classifier_name_super}")
+    st.write(f"Accuracy =  {Accuracy_super}")
+
+    # Plotting
+    pca = PCA(2)
+    X_projected = pca.fit_transform(X)
+    x1 = X_projected[:, 0]
+    x2 = X_projected[:, 1]
+
+    fig = plt.figure()
+    plt.scatter(x1, x2, c=y, alpha=0.8, cmap="viridis")
+    plt.xlabel("Principal Component Analysis 1")
+    plt.ylabel("Principal Component Analysis 2")
+    plt.colorbar()
+
+    # Show
+    st.pyplot(fig)
+
+def train_unsupervised(X,y, Classifer_Algo_unsuper, Classifier_name_unsuper):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42, test_size=0.3)
+    Classifer_Algo_unsuper.fit(X_train)
+    y_pred = Classifer_Algo_unsuper.predict(X_test)
+
+    Accuracy_unsuper = accuracy_score(y_test, y_pred)
+
+    st.write(f"Classifier name = {Classifier_name_unsuper}")
+    st.write(f"Accuracy =  {Accuracy_unsuper}")
+
+    # Plotting
+    pca = PCA(2)
+    X_projected = pca.fit_transform(X)
+    x1 = X_projected[:, 0]
+    x2 = X_projected[:, 1]
+
+    fig = plt.figure()
+    plt.scatter(x1, x2, c=y, alpha=0.8, cmap="viridis")
+    plt.xlabel("Principal Component Analysis Unsuper1")
+    plt.ylabel("Principal Component Analysis 2")
+    plt.colorbar()
+
+    # Show
+    st.pyplot(fig)
+
+def type_algo(typeofAlgorithm):
+    if typeofAlgorithm == "Supervised Algorithm":
+        SupervisedTypeCat = st.sidebar.selectbox("Select Supervised Classifier Categories",
+                                                 ("Logistic Regression", "K-Nearest Neighbor", "Support Vector Machine",
+                                                  "Random Forest Classifier", "Decision Tree"))
+        params = add_parameter_Super(SupervisedTypeCat)
+        clf_Super = get_SuperAlgo(SupervisedTypeCat, params)
+        trainsuper = train_supervised(X,y, clf_Super, SupervisedTypeCat)
+
+
     else:
-        max_depth = st.sidebar.slider("max_depth" , 2 , 15)
-        n_estimators = st.sidebar.slider("n_estimators", 1, 100)
-        params["max_depth"] = max_depth
-        params["n_estimators"] = n_estimators
-    return params
+        UnSupervisedTypeCat = st.sidebar.selectbox("Select Unsupervised Classifier Categories",
+                                                   ("K-Means Clustering", "Hierarchial Clustering"))
+        params_unsuper = add_parameter_Unsuper(UnSupervisedTypeCat)
+        clf_unsuper = get_UnSuperAlgo(UnSupervisedTypeCat, params_unsuper)
+        trainunsuper = train_unsupervised(X,y, clf_unsuper, UnSupervisedTypeCat)
 
-params = add_parameter(classifier_name)
 
-def get_classifier(clf_name, params):
-    if clf_name == "K-Nearest Neighbor":
-        clf = KNeighborsClassifier(n_neighbors=params["K"])
-    elif clf_name == "Support Vector Machine":
-        clf = SVC(C =params["C"])
-    else:
-        clf = RandomForestClassifier(n_estimators = params["n_estimators"] , max_depth= params["max_depth"] , random_state= 1234)
+AlgotithmSelected = type_algo(typeofAlgo)
 
-    return clf
 
-clf = get_classifier(classifier_name , params)
+st.markdown("""
+<style>
+.reportview-container .markdown-text-container {
+    font-family:  Georgia, serif;
+}
+.sidebar .sidebar-content {
+    background-image: linear-gradient(#2e7bcf,#2e7bcf);
+    color: white;
+}
+.Widget>label {
+    color: white;
+    font-family:  Georgia, serif;
+}
+[class^="st-b"]  {
+    color: white;
+    font-family: Georgia, serif;
+}
+# .st-bb {
+#     background-color: transparent;
+# }
+.st-at {
+    background-color: #0c0080;
+}
+footer {
+    font-family: monospace;
+}
+.reportview-container .main footer, .reportview-container .main footer a {
+    color: #0c0080;
+}
+header .decoration {
+    background-image: none;
+}
 
-# Classification
-X_train , X_test , y_train , y_test = train_test_split(X, y , random_state= 42 , test_size= 0.3)
-clf.fit(X_train , y_train)
-y_pred = clf.predict(X_test)
-
-acc = accuracy_score(y_test , y_pred)
-
-st.write(f"Classifier name = {classifier_name}")
-st.write(f"Accuracy =  {acc}")
-
-# Plotting
-pca = PCA(2)
-X_projected = pca.fit_transform(X)
-x1 = X_projected[:, 0]
-x2 = X_projected[:, 1]
-
-fig = plt.figure()
-plt.scatter(x1 , x2, c = y, alpha= 0.8, cmap="viridis")
-plt.xlabel("Principal Component Analysis 1")
-plt.ylabel("Principal Component Analysis 2")
-plt.colorbar()
-
-# Show
-st.pyplot(fig)
+</style> """
+,
+    unsafe_allow_html=True,
+)
