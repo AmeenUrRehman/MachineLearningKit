@@ -14,15 +14,55 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.cluster import KMeans
 
-st.title("All in one Machine Learning Algoithms ")
-st.write("""
-##  Exploring different Machine Learning Classifier 
-### Which one is the best Classifer? Choice is yours
-""")
+st.set_page_config(
+    page_title="Machine Learning",
+)
 
-dataset_name = st.sidebar.selectbox("Select DataSets", ("Iris", "Breast Cancer", "Wine DataSets"))
+pg_bg_img = """
+<style> 
+[data-testid = "stAppViewContainer"]{
+background-image: url("https://w0.peakpx.com/wallpaper/369/751/HD-wallpaper-mountain-landscape-sunset-minimalist-1-minimalism-minimalist-mountains-landscape-1-1-abstract-vector-deviantart-sunset.jpg");
+background-size: cover;
+}
 
-typeofAlgo = st.sidebar.selectbox("Select type of Algorithm" , ("Supervised Algorithm" , "Unsupervised Algorithm"))
+[data-testid = "stToolbar"]{
+right: 2rem}
+
+[data-testid = "stMarkdownContainer"]{
+font-size: 1rem;
+font-family:fangsong;
+}
+
+[data-testid = "stHeader"]{
+ background-color: rgba(0,0,0,0); 
+ length: 1rem;
+}
+
+[data-testid = "stSidebar"]{
+background-image: url("https://e0.pxfuel.com/wallpapers/278/784/desktop-wallpaper-latest-high-quality-iphone-11-background-for-everyone-designbolts-iphone-11-pink-thumbnail.jpg");
+background-size: cover;
+font-family: fangsong;
+}
+
+</style>
+"""
+st.markdown(pg_bg_img, unsafe_allow_html=True)
+
+header1 = '<p style="font-family:fangsong ; color: White; font-size: 50px;"> <b>Multiple Machine Learning Algoithms at one place </b> </p>'
+st.markdown(header1, unsafe_allow_html=True)
+
+header2 = '<p style="font-family:fangsong; color: White; font-size: 30px;"> Exploring different Machine Learning Classifier</p>'
+st.markdown(header2, unsafe_allow_html=True)
+
+header3 = '<p style="font-family:Georgia, serif; color: White; font-size: 25px;">  Which one is the best Classifer? </p>'
+st.markdown(header3, unsafe_allow_html=True)
+
+st.sidebar.header("Customized Parameters")
+
+dataset_name = st.sidebar.selectbox("Select Datasets", ("Iris", "Breast Cancer", "Wine DataSets"))
+
+typeofAlgo = st.sidebar.selectbox("Select ML-Algorithm" , ("Supervised Algorithm" , "Unsupervised Algorithm"))
+
 
 st.write(dataset_name)
 
@@ -120,10 +160,9 @@ def train_supervised(X,y, Classifer_Algo_super, Classifier_name_super):
 
     fig = plt.figure()
     plt.scatter(x1, x2, c=y, alpha=0.8, cmap="viridis")
-    plt.xlabel("Principal Component Analysis 1")
-    plt.ylabel("Principal Component Analysis 2")
+    plt.xlabel("Feature 1")
+    plt.ylabel("Feature 2")
     plt.colorbar()
-
     # Show
     st.pyplot(fig)
 
@@ -145,8 +184,8 @@ def train_unsupervised(X,y, Classifer_Algo_unsuper, Classifier_name_unsuper):
 
     fig = plt.figure()
     plt.scatter(x1, x2, c=y, alpha=0.8, cmap="viridis")
-    plt.xlabel("Principal Component Analysis Unsuper1")
-    plt.ylabel("Principal Component Analysis 2")
+    plt.xlabel("Feature 1")
+    plt.ylabel("Feature 2")
     plt.colorbar()
 
     # Show
@@ -175,38 +214,35 @@ AlgotithmSelected = type_algo(typeofAlgo)
 
 st.markdown("""
 <style>
+
 .reportview-container .markdown-text-container {
     font-family:  Georgia, serif;
+    
 }
 .sidebar .sidebar-content {
+
     background-image: linear-gradient(#2e7bcf,#2e7bcf);
     color: white;
+    
+}
+
+.sidebar .sidebar-selectbox{
+    font-family:  Georgia, serif;    
+
 }
 .Widget>label {
     color: white;
     font-family:  Georgia, serif;
+    
 }
 [class^="st-b"]  {
     color: white;
     font-family: Georgia, serif;
-}
-# .st-bb {
-#     background-color: transparent;
-# }
-.st-at {
-    background-color: #0c0080;
-}
-footer {
-    font-family: monospace;
-}
-.reportview-container .main footer, .reportview-container .main footer a {
-    color: #0c0080;
-}
-header .decoration {
-    background-image: none;
 }
 
 </style> """
 ,
     unsafe_allow_html=True,
 )
+
+
