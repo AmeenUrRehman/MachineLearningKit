@@ -6,7 +6,6 @@ MLKit is a machine learning project written in Python that provides a collection
 
 Link: https://ameenurrehman-allinoneml-main-up-pages-1ovylm.streamlit.app/
 
-# Streamlit
 ![Screenshot (288)](https://user-images.githubusercontent.com/83868776/236737136-f8086f30-55bd-4a85-bb71-bff6f488638f.png)
 
 
