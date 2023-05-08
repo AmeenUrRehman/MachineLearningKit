@@ -10,4 +10,4 @@ If you would like to contribute to MLkit, please fork the repository and create 
 
 License:
 
-ALLinOneML is released under the MIT License. See the LICENSE file for more details.
+It is released under the MIT License. See the LICENSE file for more details.
